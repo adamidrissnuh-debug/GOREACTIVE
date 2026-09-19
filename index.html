@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <meta name="theme-color" content="#0a0a0a" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <link rel="manifest" href="./manifest.json" />
+    <link rel="apple-touch-icon" href="./apple-touch-icon.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <title>GoReactive | Réactivité, attention & inhibition</title>
+  
+    <style>
+      html,body,#root{margin:0;width:100%;min-height:100%;background:#000;color:#fff;font-family:Arial,sans-serif;}
+      #apk-fallback{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;background:#000;color:#fff;z-index:1;text-align:center;padding:24px;}
+      #apk-fallback .bolt{width:86px;height:86px;border-radius:999px;border:1px solid rgba(245,158,11,.45);display:flex;align-items:center;justify-content:center;color:#f59e0b;font-size:42px;box-shadow:0 0 38px rgba(245,158,11,.25);animation:apkPulse 1.8s ease-in-out infinite;}
+      #apk-fallback .brand{margin-top:22px;font-weight:900;font-size:28px;letter-spacing:-2px;font-style:italic;}
+      #apk-fallback .brand span{color:#f59e0b;}
+      #apk-fallback .hint{margin-top:12px;color:rgba(255,255,255,.55);font-size:12px;letter-spacing:.16em;text-transform:uppercase;}
+      @keyframes apkPulse{0%,100%{transform:scale(1);opacity:.85}50%{transform:scale(1.08);opacity:1}}
+    </style>
+</head>
+  <body>
+    <div id="root"></div>
+    <div id="apk-fallback" aria-hidden="true">
+      <div class="bolt">⚡</div>
+      <div class="brand">GO<span>REACTIVE</span></div>
+      <div class="hint" id="apk-fallback-hint">Chargement</div>
+    </div>
+    <script>
+      (function(){
+        var isEn = (navigator.language || '').toLowerCase().indexOf('fr') !== 0;
+        var hint = document.getElementById('apk-fallback-hint');
+        if (hint && isEn) hint.textContent = 'Loading';
+        window.__goreactiveFallbackIsEn = isEn;
+
+        var fallback = document.getElementById('apk-fallback');
+        var minShowElapsed = false;
+        var rootReady = false;
+
+        function tryHide(){
+          if (minShowElapsed && rootReady && fallback) {
+            fallback.style.transition = 'opacity .35s ease';
+            fallback.style.opacity = '0';
+            setTimeout(function(){ if (fallback) fallback.remove(); }, 380);
+          }
+        }
+
+        // Keep the brand moment on screen for at least half a second — long
+        // enough to register, short enough to never feel like a delay — then
+        // cross-fade into the app the instant it's actually ready, instead
+        // of cutting on a single fixed timer that could fire too early or
+        // too late.
+        setTimeout(function(){ minShowElapsed = true; tryHide(); }, 500);
+
+        var root = document.getElementById('root');
+        if (root) {
+          if (root.childElementCount > 0) {
+            rootReady = true;
+          } else {
+            var observer = new MutationObserver(function(){
+              if (root.childElementCount > 0) {
+                rootReady = true;
+                observer.disconnect();
+                tryHide();
+              }
+            });
+            observer.observe(root, { childList: true });
+          }
+        }
+      })();
+      window.addEventListener('error', function(e){
+        var f=document.getElementById('apk-fallback');
+        if(f){f.querySelector('.hint').textContent = window.__goreactiveFallbackIsEn ? 'Loading error' : 'Erreur de chargement';}
+        console.error(e.error || e.message);
+      });
+      window.addEventListener('unhandledrejection', function(e){ console.error(e.reason); });
+    </script>
+
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
+

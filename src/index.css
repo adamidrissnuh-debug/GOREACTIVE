@@ -1,0 +1,154 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Outfit", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+}
+
+@layer base {
+  :root {
+    --bg-primary: #030303;
+    --bg-secondary: #0d0d0d;
+    --acc-primary: #d8ad45; /* Premium gold */
+    --acc-secondary: #fff3c4;
+    --acc-on-primary: #0a0904; /* text/icon color guaranteed to read on top of --acc-primary */
+    --text-primary: #fffaf0;
+    --text-secondary: rgba(255, 250, 240, 0.65);
+    --border-color: rgba(216, 173, 69, 0.14);
+    --shadow-acc: rgba(216, 173, 69, 0.30);
+    /* Marges de sécurité (encoche, barre de statut, barre de navigation
+       système) — 0 sur un appareil sans encoche, la vraie valeur sinon. */
+    --safe-top: max(24px, env(safe-area-inset-top, 0px));
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
+    --safe-left: env(safe-area-inset-left, 0px);
+    --safe-right: env(safe-area-inset-right, 0px);
+  }
+
+
+  body {
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+
+  /* L'app doit occuper TOUT l'écran, jusque sous l'encoche/la barre de
+     statut (déjà rendue transparente côté natif Android) — mais ce
+     conteneur devient le point de référence pour tous les écrans en
+     position absolute/fixed à l'intérieur, afin qu'ils respectent
+     eux-mêmes cette marge sans avoir besoin d'être modifiés un par un.
+     `transform` (même neutre) rend ce conteneur "containing block" pour
+     ses enfants position:fixed en plus des position:absolute — c'est
+     voulu, pas un oubli. */
+  #root {
+    position: relative;
+    height: 100dvh;
+    width: 100vw;
+    overflow: hidden;
+    transform: translateZ(0);
+    padding: var(--safe-top) var(--safe-right) var(--safe-bottom) var(--safe-left);
+    box-sizing: border-box;
+  }
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: var(--acc-primary);
+  opacity: 0.2;
+  border-radius: 10px;
+}
+
+
+/* APK immersive fullscreen sizing */
+html,
+body,
+#root {
+  width: 100%;
+  min-width: 100%;
+  height: 100%;
+  min-height: 100%;
+  margin: 0;
+  padding: 0;
+  background: #000000;
+  overscroll-behavior: none;
+}
+
+body {
+  min-height: 100vh;
+  min-height: 100dvh;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+#root {
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+
+@layer components {
+  .premium-shell {
+    background:
+      radial-gradient(circle at 50% -18%, rgba(216, 173, 69, 0.16), transparent 34%),
+      linear-gradient(180deg, #050505 0%, #000000 100%);
+  }
+
+  .premium-card {
+    background: linear-gradient(180deg, rgba(255,255,255,0.045), rgba(255,255,255,0.018));
+    border: 1px solid rgba(216, 173, 69, 0.13);
+    box-shadow: 0 18px 50px rgba(0,0,0,0.32), inset 0 1px 0 rgba(255,255,255,0.05);
+    backdrop-filter: blur(14px);
+  }
+
+  .premium-card-quiet {
+    background: rgba(255,255,255,0.026);
+    border: 1px solid rgba(255,255,255,0.07);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.035);
+  }
+
+  .premium-button {
+    background: linear-gradient(180deg, rgba(255,255,255,0.055), rgba(255,255,255,0.018));
+    border: 1px solid rgba(216, 173, 69, 0.18);
+    color: var(--text-primary);
+    box-shadow: 0 12px 28px rgba(0,0,0,0.25);
+  }
+
+  .premium-button-active {
+    background: linear-gradient(135deg, #f3cf74 0%, #d8ad45 48%, #9f7225 100%);
+    color: #050505;
+    border-color: rgba(255, 235, 170, 0.75);
+    box-shadow: 0 0 22px rgba(216, 173, 69, 0.28), 0 18px 34px rgba(0,0,0,0.35);
+  }
+
+  .gold-divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(216,173,69,0.52), transparent);
+  }
+
+  .safe-pad-x {
+    padding-left: max(1rem, env(safe-area-inset-left));
+    padding-right: max(1rem, env(safe-area-inset-right));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@keyframes toast-in-out {
+  0% { opacity: 0; transform: translate(-50%, 8px); }
+  10% { opacity: 1; transform: translate(-50%, 0); }
+  88% { opacity: 1; transform: translate(-50%, 0); }
+  100% { opacity: 0; transform: translate(-50%, 8px); }
+}

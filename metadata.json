@@ -1,0 +1,7 @@
+{
+  "name": "GoReactive",
+  "description": "An elite cognitive reaction training application designed for athletes and high-performance individuals to sharpen journal decision-making through auditory and visual stimuli.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}

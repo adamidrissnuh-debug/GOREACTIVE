@@ -1,0 +1,13 @@
+Place le contenu du modèle Vosk ANGLAIS directement dans ce dossier
+(android/app/src/main/assets/model-en/), PAS dans un sous-dossier.
+
+Modèle attendu : vosk-model-small-en-us-0.15 (ou équivalent)
+Après extraction du .zip téléchargé, le contenu de ce dossier doit être :
+  model-en/am/
+  model-en/conf/
+  model-en/graph/
+  model-en/ivector/
+  ... etc. (directement, sans dossier intermédiaire)
+
+Supprime ce fichier .txt une fois le modèle en place (il n'est là que pour
+indiquer l'emplacement exact dans le zip).
